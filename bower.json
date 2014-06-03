@@ -1,8 +1,8 @@
 {
   "author": "AngularUI",
   "name": "angular-ui-select2",
-  "version": "0.0.5",
-  "homepage": "http://angular-ui.github.com",
+  "version": "0.0.5a",
+  "homepage": "https://github.com/deskfed/ui-select2",
   "keywords": [
     "angular",
     "angularui",

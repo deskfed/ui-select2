@@ -97,6 +97,11 @@ angular.module('ui.select2', []).value('uiSelect2Config', {}).directive('uiSelec
             } else {
               if (opts.multiple) {
                 var viewValue = controller.$viewValue;
+                //Lets return if we are not using simple tags and the value
+                //is not an array.
+                if ((!opts.simple_tags) && (!angular.isArray(viewValue))) {
+                  return;
+                }
                 if (angular.isString(viewValue)) {
                   viewValue = viewValue.split(',');
                 }

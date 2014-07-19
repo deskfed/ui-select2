@@ -32,7 +32,8 @@ angular.module('ui.select2', []).value('uiSelect2Config', {}).directive('uiSelec
 
       return function (scope, elm, attrs, controller) {
         // instance-specific options
-        var opts = angular.extend({}, options, scope.$eval(attrs.uiSelect2));
+        var watchTimeout, initTimeout,
+          opts = angular.extend({}, options, scope.$eval(attrs.uiSelect2));
 
         /*
         Convert from Select2 view-model to Angular view-model.
@@ -126,7 +127,7 @@ angular.module('ui.select2', []).value('uiSelect2Config', {}).directive('uiSelec
                 return;
               }
               // Delayed so that the options have time to be rendered
-              $timeout(function () {
+              watchTimeout = $timeout(function () {
                 elm.select2('val', controller.$viewValue);
                 // Refresh angular to remove the superfluous option
                 elm.trigger('change');
@@ -154,7 +155,7 @@ angular.module('ui.select2', []).value('uiSelect2Config', {}).directive('uiSelec
             // Set the view and model value and update the angular template manually for the ajax/multiple select2.
             elm.bind("change", function (e) {
               e.stopImmediatePropagation();
-              
+
               if (scope.$$phase || scope.$root.$$phase) {
                 return;
               }
@@ -177,6 +178,9 @@ angular.module('ui.select2', []).value('uiSelect2Config', {}).directive('uiSelec
         }
 
         elm.bind("$destroy", function() {
+          $timeout.cancel(initTimeout);
+          $timeout.cancel(watchTimeout);
+          initTimeout = watchTimeout = null;
           elm.select2("destroy");
         });
 
@@ -196,7 +200,7 @@ angular.module('ui.select2', []).value('uiSelect2Config', {}).directive('uiSelec
         }
 
         // Initialize the plugin late so that the injected DOM does not disrupt the template compiler
-        $timeout(function () {
+        initTimeout = $timeout(function () {
           elm.select2(opts);
 
           // Set initial value - I'm not sure about this but it seems to need to be there
